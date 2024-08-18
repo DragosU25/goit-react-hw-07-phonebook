@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from '../../redux/contacts/contactsSlice';
-import { getFilteredContacts } from '../../redux/contacts/contactsSelector';
+import { addContact } from '../../redux/operations';
+import { getContacts } from '../../redux/contacts/contactsSelector';
 import styles from './ContactForm.module.css';
-import { nanoid } from '@reduxjs/toolkit';
 
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const dispatch = useDispatch();
-  const contacts = useSelector(getFilteredContacts);
+  const contacts = useSelector(getContacts);
 
   const handleChange = event => {
     const { name, value } = event.target;
@@ -20,7 +19,9 @@ function ContactForm() {
   const handleSubmit = event => {
     event.preventDefault();
 
-    // Verifică dacă contactul există deja
+    const name = event.target.name.value.trim();
+    const number = event.target.number.value.trim();
+
     const contactExists = contacts.some(
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
@@ -30,15 +31,7 @@ function ContactForm() {
       return;
     }
 
-    const newContact = {
-      id: nanoid(), // Creează un id unic
-      name,
-      number,
-    };
-
-    dispatch(addContact(newContact)); // Adaugă contactul în Redux
-
-    // Resetează formularul și state-ul local
+    dispatch(addContact({ name, number }));
     setName('');
     setNumber('');
   };
@@ -56,7 +49,7 @@ function ContactForm() {
       />
       <label className={styles.formLabel}>Number</label>
       <input
-        type="number"
+        type="tel"
         name="number"
         value={number}
         onChange={handleChange}

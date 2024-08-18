@@ -1,7 +1,6 @@
-// src/components/ContactList/ContactList.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from '../../redux/contacts/contactsSlice';
+import { fetchContacts } from '../../redux/operations';
 import { getFilteredContacts } from '../../redux/contacts/contactsSelector';
 import ContactItem from '../ContactItem/ContactItem';
 import styles from './ContactList.module.css';
@@ -9,18 +8,15 @@ import styles from './ContactList.module.css';
 function ContactList() {
   const dispatch = useDispatch();
   const contacts = useSelector(getFilteredContacts);
-  const handleDelete = id => {
-    dispatch(deleteContact(id));
-  };
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <ul className={styles.list}>
       {contacts.map(contact => (
-        <ContactItem
-          key={contact.id}
-          contact={contact}
-          onDelete={() => handleDelete(contact.id)}
-        />
+        <ContactItem key={contact.id} contact={contact} />
       ))}
     </ul>
   );
